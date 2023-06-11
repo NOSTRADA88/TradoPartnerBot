@@ -6,7 +6,7 @@ import base64
 import httpx
 
 
-__domain = 'https://test.tradoclub.ru/'
+__domain = 'https://my.tradoclub.ru/'
 
 
 async def get_encoded_data():
