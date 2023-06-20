@@ -1,8 +1,10 @@
+import asyncio
+
 from aiogram.filters import Text
 from aiogram import Router, Bot
 from aiogram.fsm.context import FSMContext
 from config_data.config import Config, load_config
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, InputMediaPhoto, FSInputFile
 from keyboards.inline_kb import work_kb, back_to_work_kb, back_kb
 from config_data.site_api import get_clients, get_account_details, get_user_id
 from routers.start_router import UserPhone
@@ -24,8 +26,8 @@ async def work_command(callback: CallbackQuery, state: FSMContext) -> None:
     balance_all_time = "{:,.2f}".format(account_details['incoming_balance_all_time']).replace(',', ' ')
     last_month = "{:,.2f}".format(account_details['last_month_incoming']).replace(',', ' ')
     current_balance = "{:,.2f}".format(account_details['balance']).replace(',', ' ')
-    await callback.message.edit_text(
-        text=f"Текущий баланс кошелька: {current_balance}\n\nЗа прошлый месяц вы заработали: {last_month}\n\nВсего заработано: {balance_all_time}",
+    await callback.message.edit_media(
+        media=InputMediaPhoto(media=FSInputFile('photos/income.png'), caption=f"Текущий баланс кошелька: {current_balance}\n\nЗа прошлый месяц вы заработали: {last_month}\n\nВсего заработано: {balance_all_time}"),
         reply_markup=work_kb
     )
 
@@ -39,15 +41,15 @@ async def clients_command(callback: CallbackQuery, state: FSMContext) -> None:
     client_str = ''
     for iteration in range(len(clients_list)):
         client_str += clients_list[iteration] + "\n"
-    await callback.message.edit_text(
-        text=f"Последние клиенты:\n{client_str}",
+    await callback.message.edit_media(
+        media=InputMediaPhoto(media=FSInputFile('photos/clients.png'), caption=f'Последние клиенты:\n{client_str if client_str else "похоже, что тут пока пусто 😔"}'),
         reply_markup=back_to_work_kb
     )
 
 
 @router.callback_query(Text(text="withdraw_money"))
 async def withdraw_money_command(callback: CallbackQuery) -> None:
-    await callback.message.edit_text(
-        text="Пожалуйста, свяжитесь с вашим персональным менеджером, чтобы заполнить заявку на вывод средств\n\nТелеграм: @ilyyyyaaa\nНомер телефона: + 7 (996) 404 7612\nПочта: trado.marketing@gmail.com",
+    await callback.message.edit_media(
+        media=InputMediaPhoto(media=FSInputFile("photos/manager.png"), caption='Пожалуйста, свяжитесь с вашим персональным менеджером, чтобы заполнить заявку на вывод средств\n\nТелеграм: @ilyyyyaaa\nНомер телефона: + 7 (996) 404 7612\nПочта: trado.marketing@gmail.com'),
         reply_markup=back_kb
     )

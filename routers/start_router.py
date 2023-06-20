@@ -24,7 +24,7 @@ class UserPhone(StatesGroup):
 
 @router.message(CommandStart())
 async def command_start_ask_phone(message: Message, state: FSMContext):
-    photo = FSInputFile(path="photos/TgBot1.png")
+    photo = FSInputFile(path="photos/partner_program.png")
     await bot.send_photo(
         chat_id=message.from_user.id,
         photo=photo,
@@ -115,9 +115,10 @@ async def command_start(message: Message, state: FSMContext) -> None:
         await asyncio.sleep(3)
         # await bot.delete_message(chat_id=message.from_user.id, message_id=msg_6.message_id)
 
-        await bot.send_message(
+        await bot.send_photo(
             chat_id=message.from_user.id,
-            text="Добро пожаловать в панель партнера ТРАДО.\n\nВыберите нужную кнопку:",
+            photo=FSInputFile('photos/main_menu.png'),
+            caption="Добро пожаловать в панель партнера ТРАДО.\n\nВыберите нужную кнопку:",
             reply_markup=main_kb
         )
     else:
@@ -130,11 +131,13 @@ async def command_start(message: Message, state: FSMContext) -> None:
 
 @router.message()
 async def default_answer(message: Message) -> None:
-    await bot.send_message(
-        chat_id=message.from_user.id,
-        text='Для того, чтобы отправить сообщение, воспользуйтесь формой "Мой менеджер - Оставить обращение"',
-        reply_markup=main_kb
-    )
+    if db.check_user_id_by_id(message.from_user.id):
+        await bot.send_photo(
+            chat_id=message.from_user.id,
+            photo=FSInputFile('photos/main_menu.png'),
+            caption='Для того, чтобы отправить сообщение, воспользуйтесь формой "👨‍💼 Мой менеджер - ✏️ Написать обращение"',
+            reply_markup=main_kb
+        )
 
 
 async def send_spam_1(bot: Bot = Bot(config.tg_bot.token)):
@@ -142,7 +145,7 @@ async def send_spam_1(bot: Bot = Bot(config.tg_bot.token)):
     for iteration in range(0, len(clients_list)):
         client_data_tuple = clients_list[iteration]
         if client_data_tuple[6] - datetime.now().timestamp() <= 0:
-            photo = FSInputFile('photos/TgBot5.png')
+            photo = FSInputFile('photos/share_discount_rn.png')
             await bot.send_photo(
                 chat_id=client_data_tuple[5],
                 photo=photo,
@@ -157,7 +160,7 @@ async def send_spam_2(bot: Bot = Bot(config.tg_bot.token)):
     for iteration in range(0, len(clients_list)):
         client_data_tuple = clients_list[iteration]
         if client_data_tuple[7] - datetime.now().timestamp() <= 0:
-            photo = FSInputFile("photos/TgBot6.png")
+            photo = FSInputFile("photos/sells_up_30.png")
             await bot.send_photo(
                 chat_id=client_data_tuple[5],
                 photo=photo,
@@ -172,7 +175,7 @@ async def send_spam_3(bot: Bot = Bot(config.tg_bot.token)):
     for iteration in range(0, len(clients_list)):
         client_data_tuple = clients_list[iteration]
         if client_data_tuple[8] - datetime.now().timestamp() <= 0:
-            photo = FSInputFile("photos/TgBot4.png")
+            photo = FSInputFile("photos/base_knowledge.png")
             await bot.send_photo(
                 chat_id=client_data_tuple[5],
                 photo=photo,

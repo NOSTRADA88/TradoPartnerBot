@@ -87,7 +87,7 @@ class DataBase:
             connection.execute(statement)
             return connection.commit()
 
-    def check_user_id(self, phone_number: str, user_id: int) -> str | None:
+    def check_user_id(self, phone_number: str, user_id: int) -> str | bool:
         statement = select(self.client_table).where(and_(
             self.client_table.c.phone_number == phone_number,
             self.client_table.c.user_id == user_id
@@ -96,6 +96,12 @@ class DataBase:
             result = connection.execute(statement).fetchone()
             return result[5] if result is not None else False
 
+    def check_user_id_by_id(self, user_id: int) -> str | bool:
+        statement = select(self.client_table).where(self.client_table.c.user_id == user_id)
+        with self.engine.connect() as connection:
+            result = connection.execute(statement).fetchone()
+            return result[0] if result is not None else False
+
     def get_all_clients(self) -> list:
         statement = select(self.client_table)
         with self.engine.connect() as connection:
@@ -103,7 +109,7 @@ class DataBase:
 
     def update_spam_1(self, phone_number: str, spam1: datetime) -> None:
         upd_spam1 = update(self.client_table).values(
-            spam1=(spam1 + timedelta(days=3)).timestamp(),  #d
+            spam1=(spam1 + timedelta(days=3)).timestamp(),
         ).where(self.client_table.c.phone_number == phone_number)
         with self.engine.connect() as connection:
             connection.execute(upd_spam1)
